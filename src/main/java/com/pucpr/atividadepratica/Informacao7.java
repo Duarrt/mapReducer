@@ -4,6 +4,7 @@ import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -13,14 +14,14 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class Informacao7 {
     
-    public static class MapperInformacao7 extends Mapper<Object, Text, Text, IntWritable> {
+    public static class MapperInformacao7 extends Mapper<Object, Text, Text, LongWritable> {
         
         @Override
         public void map(Object chave, Text valor, Context context) throws IOException, InterruptedException {
             String linha = valor.toString();
             String[] campos = linha.split(";");
             
-            IntWritable valorMap = new IntWritable(0);
+            //FloatWritable valorMap = new FloatWritable(0);
             
             if(campos.length == 10) {
                 String mercadoria = campos[3];
@@ -28,7 +29,8 @@ public class Informacao7 {
                                 
                 Text chaveMap = new Text(mercadoria);
                 
-                valorMap = new IntWritable(Integer.parseInt(peso));
+                LongWritable valorMap = new LongWritable(Long.parseLong(campos[6]));
+                //FloatWritable valorMap = new FloatWritable(Float.parseFloat(peso));
                             
                 context.write(chaveMap, valorMap);
  
@@ -37,19 +39,17 @@ public class Informacao7 {
         
     }
     
-    public static class ReducerInformacao7 extends Reducer<Text, IntWritable, Text, IntWritable> {
+    public static class ReducerInformacao7 extends Reducer<Text, LongWritable, Text, LongWritable> {
     
-            @Override
-            public void reduce(Text chave, Iterable<IntWritable> valores, Context context) throws IOException, InterruptedException {
+            public void reduce(Text chave, Iterable<LongWritable> valores, Context context) throws IOException, InterruptedException {
                 int soma = 0;
-                int maiorPeso = 0;
                 
-                for(IntWritable valor : valores){
+                for(LongWritable valor : valores){
                     soma += valor.get();
-
+                    
                 }
    
-                context.write(chave, new IntWritable(soma));
+                context.write(chave, new LongWritable(soma));
             }
     }
     

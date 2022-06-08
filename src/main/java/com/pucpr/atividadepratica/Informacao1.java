@@ -23,11 +23,7 @@ public class Informacao1 {
             if(campos.length == 10) {
                 String pais = campos[0];
                 int quantidade = 1;
-                
-//                for(int i = 0; i < ; i++){
-//                    
-//                }
-                
+                              
                 Text chaveMap = new Text(pais);
                 IntWritable valorMap = new IntWritable(quantidade);
                 
@@ -43,11 +39,11 @@ public class Informacao1 {
             @Override
             public void reduce(Text chave, Iterable<IntWritable> valores, Context context) throws IOException, InterruptedException {
                 int soma = 0;
-                
+                        
                 for(IntWritable valor : valores){
-                    soma += valor.get();
-                }
-   
+                    soma += valor.get();                 
+                    }
+                
                 context.write(chave, new IntWritable(soma));
             }
     }

@@ -1,6 +1,9 @@
 package com.pucpr.atividadepratica;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -22,11 +25,7 @@ public class Informacao4 {
             if(campos.length == 10) {
                 String mercadoria = campos[3];
                 int quantidade = 1;
-                
-//                for(int i = 0; i < ; i++){
-//                    
-//                }
-                
+
                 Text chaveMap = new Text(mercadoria);
                 IntWritable valorMap = new IntWritable(quantidade);
                 
@@ -42,16 +41,29 @@ public class Informacao4 {
             public void reduce(Text chave, Iterable<IntWritable> valores, Context context) throws IOException, InterruptedException {
                 int soma = 0;
                 
+//                int maiorQtd = 0;
+                ArrayList<Integer> qtdSoma = new ArrayList();
+                
                 for(IntWritable valor : valores){
                     soma += valor.get();
+                    
+                    qtdSoma.add(soma);
                 }
-   
+                
+                int maiorAtual = Collections.max(qtdSoma);
+                ArrayList<Integer> maiorGeral = new ArrayList(maiorAtual);
+                    
+                System.out.println(maiorAtual);
+
                 context.write(chave, new IntWritable(soma));
+                //System.out.println("MAIOR NUM: " + Collections.max(maiorGeral));
             }
     }
     
     public static void main(String[] args) throws Exception {
 
+        System.out.println("MERCADORIA COM MAIOR QUANTIDADE: ");
+        
         String arquivoEntrada = "/home/Disciplinas/FundamentosBigData/OperacoesComerciais/base_100_mil.csv";
         String arquivoSaida = "/home2/ead2022/SEM1/ramon.duarte/Desktop/atividadePratica/informacao4";
         

@@ -23,10 +23,6 @@ public class Informacao3 {
                 String ano = campos[1];
                 int quantidade = 1;
                 
-//                for(int i = 0; i < ; i++){
-//                    
-//                }
-                
                 Text chaveMap = new Text(ano);
                 IntWritable valorMap = new IntWritable(quantidade);
                 

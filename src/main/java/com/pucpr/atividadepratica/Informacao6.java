@@ -23,11 +23,7 @@ public class Informacao6 {
             if((campos.length == 10) && (campos[1].equals("2016")) && (campos[0].equals("Brazil")))  {
                 String mercadoria = campos[3];
                 int quantidade = 1;
-                
-//                for(int i = 0; i < ; i++){
-//                    
-//                }
-                
+
                 Text chaveMap = new Text(mercadoria);
                 IntWritable valorMap = new IntWritable(quantidade);
                 

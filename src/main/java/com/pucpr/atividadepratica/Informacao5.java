@@ -24,10 +24,6 @@ public class Informacao5 {
                 String mercadoria = campos[3];
                 int quantidade = 1;
                 
-//                for(int i = 0; i < ; i++){
-//                    
-//                }
-                
                 Text chaveMap = new Text(mercadoria);
                 IntWritable valorMap = new IntWritable(quantidade);
                 

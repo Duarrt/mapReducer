@@ -21,16 +21,14 @@ public class Informacao8 {
             String[] campos = linha.split(";");
             
             if(campos.length == 10) {
-                String pais = campos[0];
-                int quantidade = 1;
-                
-//                for(int i = 0; i < ; i++){
-//                    
-//                }
-                
-                Text chaveMap = new Text(pais);
-                IntWritable valorMap = new IntWritable(quantidade);
-                
+                String ano = campos[1];
+                String mercadoria = campos[3];
+                String peso = campos[6];
+                                
+                Text chaveMap = new Text(ano);
+                                             
+                IntWritable valorMap = new IntWritable(Integer.parseInt(peso));
+                            
                 context.write(chaveMap, valorMap);
  
             }
