@@ -18,26 +18,28 @@ public class Informacao7 {
         
         @Override
         public void map(Object chave, Text valor, Context context) throws IOException, InterruptedException {
+            
             String linha = valor.toString();
             String[] campos = linha.split(";");
-            
-            //FloatWritable valorMap = new FloatWritable(0);
-            
+            LongWritable valorMap = new LongWritable(0);
+
             if(campos.length == 10) {
                 String mercadoria = campos[3];
                 String peso = campos[6];
-                                
+
                 Text chaveMap = new Text(mercadoria);
-                
-                LongWritable valorMap = new LongWritable(Long.parseLong(campos[6]));
-                //FloatWritable valorMap = new FloatWritable(Float.parseFloat(peso));
-                            
-                context.write(chaveMap, valorMap);
- 
+            
+            
+                try {
+                    valorMap = new LongWritable(Long.parseLong(peso));
+                } catch (NumberFormatException err) {
+
+                } finally {
+                }
+                    context.write(chaveMap, valorMap);
+                }
             }
-        }
-        
-    }
+        }   
     
     public static class ReducerInformacao7 extends Reducer<Text, LongWritable, Text, LongWritable> {
     
@@ -48,8 +50,8 @@ public class Informacao7 {
                     soma += valor.get();
                     
                 }
-   
-                context.write(chave, new LongWritable(soma));
+                LongWritable result = new LongWritable(soma);
+                context.write(chave, result);
             }
     }
     
@@ -70,7 +72,7 @@ public class Informacao7 {
         job.setMapperClass(MapperInformacao7.class);
         job.setReducerClass(ReducerInformacao7.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(LongWritable.class);
         
         FileInputFormat.addInputPath(job, new Path(arquivoEntrada));
         FileOutputFormat.setOutputPath(job, new Path(arquivoSaida));

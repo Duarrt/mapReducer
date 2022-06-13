@@ -4,6 +4,7 @@ import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -13,40 +14,45 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class Informacao8 {
     
-    public static class MapperInformacao8 extends Mapper<Object, Text, Text, IntWritable> {
+    public static class MapperInformacao8 extends Mapper<Object, Text, Text, LongWritable> {
         
         @Override
         public void map(Object chave, Text valor, Context context) throws IOException, InterruptedException {
+            
             String linha = valor.toString();
             String[] campos = linha.split(";");
-            
+            LongWritable valorMap = new LongWritable(0);
+
             if(campos.length == 10) {
-                String ano = campos[1];
                 String mercadoria = campos[3];
                 String peso = campos[6];
-                                
-                Text chaveMap = new Text(ano);
-                                             
-                IntWritable valorMap = new IntWritable(Integer.parseInt(peso));
-                            
-                context.write(chaveMap, valorMap);
- 
+                String ano = campos[1];
+
+                Text chaveMap = new Text(mercadoria + " >>> " + ano);
+            
+            
+                try {
+                    valorMap = new LongWritable(Long.parseLong(peso));
+                } catch (NumberFormatException err) {
+
+                } finally {
+                }
+                    context.write(chaveMap, valorMap);
+                }
             }
-        }
-        
-    }
+        }   
     
-    public static class ReducerInformacao8 extends Reducer<Text, IntWritable, Text, IntWritable> {
+    public static class ReducerInformacao8 extends Reducer<Text, LongWritable, Text, LongWritable> {
     
-            @Override
-            public void reduce(Text chave, Iterable<IntWritable> valores, Context context) throws IOException, InterruptedException {
+            public void reduce(Text chave, Iterable<LongWritable> valores, Context context) throws IOException, InterruptedException {
                 int soma = 0;
                 
-                for(IntWritable valor : valores){
+                for(LongWritable valor : valores){
                     soma += valor.get();
+                    
                 }
-   
-                context.write(chave, new IntWritable(soma));
+                LongWritable result = new LongWritable(soma);
+                context.write(chave, result);
             }
     }
     
@@ -67,7 +73,7 @@ public class Informacao8 {
         job.setMapperClass(MapperInformacao8.class);
         job.setReducerClass(ReducerInformacao8.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(LongWritable.class);
         
         FileInputFormat.addInputPath(job, new Path(arquivoEntrada));
         FileOutputFormat.setOutputPath(job, new Path(arquivoSaida));
